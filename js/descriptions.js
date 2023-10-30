@@ -19,19 +19,27 @@ function addEventHandlerForSearch() {
 
 	textbox.addEventListener("input", function(){
 		var textVal = textbox.value;
+		var matchCount;
 		$("#searchText").text(textVal);
 
-		//now we count how many times the input val is in the text
-		var matchCount = tweet_array.filter(function(tweet){
-			return tweet.text.includes(textVal);
-		}).length;
+		if (textVal){
+			//now we count how many times the input val is in the text
+			matchCount = tweet_array.filter(function(tweet){
+				return tweet.text.includes(textVal);
+			});
+		}
+		else{
+			matchCount = tweet_array;
+		}
+		
+		//}).length;
 
-		amountOfTweets.textContent = matchCount;
+		amountOfTweets.textContent = matchCount.length;
 
 
 		//fixes the values in the table
 		table.innerHTML = "";
-		tweet_array.forEach(function(tweet, index){
+		matchCount.forEach(function(tweet, index){
 			var row = document.createElement("tr");
 
 			//num col
@@ -48,7 +56,7 @@ function addEventHandlerForSearch() {
 			var tweetTextCell = document.createElement("td");
 			tweetTextCell.textContent = tweet.text;
 			row.appendChild(tweetTextCell);
-	
+
 			table.appendChild(row);
 		});
 	});

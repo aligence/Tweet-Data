@@ -234,11 +234,18 @@ function parseTweets(runkeeper_tweets) {
 	});
 
 	//array to hold avg dist per day
-	/*var avgDistByDayArr = [];
-	helpAvgArr.forEach(function(tweet){
+	var avgDistByDayArr = [];
+	helpAvgArr.forEach(function(item){
 		var total = 0.0;
-		for ( var i = 0; i < tweet[""])
-	});*/
+		for ( var i = 0; i < item["distances"].length; i++){
+			total += item["distances"][i];
+		}
+		avgDistByDayArr.push({
+			time: item["d"].day,
+			averageDist: total/item["distances"].length,
+			activity: item["a"]
+		})
+	});
 
 
 	distOfThreeActs = {
@@ -287,6 +294,7 @@ function parseTweets(runkeeper_tweets) {
 		  }
 	  };
 	  vegaEmbed('#distanceVisAggregated', distOf3Aggre, {actions:false});
+	  console.log(avgDistByDayArr.length);
 }
 
 

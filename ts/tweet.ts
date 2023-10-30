@@ -131,25 +131,22 @@ class Tweet {
         else{ return "Sat"}
         
     }
-
-    getHTMLTableRow(rowNumber:number):string {
+    get extractUrl():string {
+                let urlRegex = /(\b(https?|ftp|file):\/\/([-A-Z0-9+&@#%?=~_|!:,.;]*)([-A-Z0-9+&@#%?\/=~_|!:,.;]*)[-A-Z0-9+&@#\/%=~_|])/ig;
+                let match = this.text.match(urlRegex);
+                if (match && match.length > 0) {
+                    let url = match[0];
+                    return url;
+                } else {
+                    console.log("No URL found in the text.");
+                    return "";
+                }
+            }
+        
+    getHTMLTableRow(text:string):string {
         //TODO: return a table row which summarizes the tweet with a clickable link to the RunKeeper activity
-        let clickableTweetText = this.parseLinks(this.text); // Parse tweet text to make links clickable
-        // Generate a table row with clickable link to the RunKeeper activity
-        return `<tr>
-                    <td>${rowNumber}</td>
-                    <td>${this.activityType}</td>
-                    <td>${clickableTweetText}</td>
-                </tr>`;
+         
+        return '<tr>${text}<tr>';
     }
 
-    private parseLinks(text: string): string {
-        // Regular expression to match URLs in the tweet text
-        let urlRegex = /(https?:\/\/[^\s]+)/g;
-        // Replace URLs with clickable links
-        let clickableText = text.replace(urlRegex, function(url) {
-            return `<a href="${url}" target="_blank">${url}</a>`;
-        });
-        return clickableText;
-    }
 }
