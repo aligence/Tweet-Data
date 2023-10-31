@@ -12,7 +12,9 @@ function parseTweets(runkeeper_tweets) {
 function addEventHandlerForSearch() {
 	//TODO: Search the written tweets as text is entered into the search box, and add them to the table
 
+
 	//fixes the span in the html so that the input is shown
+	
 	var textbox = document.getElementById("textFilter");
 	var amountOfTweets = document.getElementById("searchCount");
 	var table = document.getElementById("tweetTable");
@@ -32,7 +34,6 @@ function addEventHandlerForSearch() {
 			matchCount = tweet_array;
 		}
 		
-		//}).length;
 
 		amountOfTweets.textContent = matchCount.length;
 
@@ -40,6 +41,13 @@ function addEventHandlerForSearch() {
 		//fixes the values in the table
 		table.innerHTML = "";
 		matchCount.forEach(function(tweet, index){
+			//supposed to make links clickable
+			function formatLinks(){
+				const Rexp = /((http|https|ftp):\/\/[\w?=&.\/-;#~%-]+(?![\w\s?&.\/;#~%"=-]*>))/g;
+				var formatted = tweet.text.replace(Rexp, "<a href ='$1' target='_blank'>$1</a>")
+				return formatted;	
+			} 
+			//console.log(tweet.activityType);
 			var row = document.createElement("tr");
 
 			//num col
@@ -54,13 +62,20 @@ function addEventHandlerForSearch() {
 	
 			// Tweet Text column
 			var tweetTextCell = document.createElement("td");
-			tweetTextCell.textContent = tweet.text;
+			var formattedText = formatLinks();
+			tweetTextCell.innerHTML = formattedText;
+
 			row.appendChild(tweetTextCell);
 
 			table.appendChild(row);
 		});
 	});
+
+
+	
 }
+
+
 
 
 

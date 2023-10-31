@@ -115,9 +115,7 @@ function parseTweets(runkeeper_tweets) {
 			wkDayCount++;
 			
 		}
-		else if(tweet.day != "Sun"){
-			console.log("an");
-		}
+		
 		else{
 			wkndCount++
 		}
@@ -192,9 +190,13 @@ function parseTweets(runkeeper_tweets) {
 		'Sun' : 0
 	};
 
+	
+	
+
+
+	//adds all vals to the seperate 3 arrays
 	tweet_array.forEach(function(tweet){
 		var day = tweet.day;
-		var date = new Date(tweet.time);
 		if (tweet.activityType == "biking"){
 			perDayDistBiking[day] = tweet.distance;
 		}
@@ -206,78 +208,122 @@ function parseTweets(runkeeper_tweets) {
 		}
 		
 	});
+	
+	//combines data from all 3 arrays
+	let perDayDistances = {
+		'Mon': {
+			'Biking': perDayDistBiking['Mon'],
+			'Running': perDayDistRunning['Mon'],
+			'Swimming': perDayDistSwimming['Mon']
+		},
+		'Tue': {
+			'Biking': perDayDistBiking['Tue'],
+			'Running': perDayDistRunning['Tue'],
+			'Swimming': perDayDistSwimming['Tue']
+		},
+		'Wed': {
+			'Biking': perDayDistBiking['Wed'],
+			'Running': perDayDistRunning['Wed'],
+			'Swimming': perDayDistSwimming['Wed']
+		},
+		'Thu': {
+			'Biking': perDayDistBiking['Thu'],
+			'Running': perDayDistRunning['Thu'],
+			'Swimming': perDayDistSwimming['Thu']
+		},
+		'Fri': {
+			'Biking': perDayDistBiking['Fri'],
+			'Running': perDayDistRunning['Fri'],
+			'Swimming': perDayDistSwimming['Fri']
+		},
+		'Sat': {
+			'Biking': perDayDistBiking['Sat'],
+			'Running': perDayDistRunning['Sat'],
+			'Swimming': perDayDistSwimming['Sat']
+		},
+		'Sun': {
+			'Biking': perDayDistBiking['Sun'],
+			'Running': perDayDistRunning['Sun'],
+			'Swimming': perDayDistSwimming['Sun']
+		}
+	};
 
-	//array that will hold the distances per day
-	var helperDistArr = [];
 	var distByDayArr = [];
-	distByDayArr.forEach(function(tweet){
-		var act = tweet.activityType;
-		var day = tweet.day;
-		var key = act + day;
-		if(!helperDistArr.includes(key)){
-			helperDistArr.push(key);
-			helperDistArr.push({
-				k: key,
-				a: act,
-				d: day,
-				distances: [tweet.distance]
+	for (let day in perDayDistances){
+		for(let activity in perDayDistances[day]){
+			distByDayArr.push({
+				'Day': day,
+				'Activity': activity,
+				'Distance': perDayDistances[day][activity]
 			});
 		}
-		else{
-			for(var i = 0; i < helperDistArr.length; i++){
-				if(helperDistArr[i]["k"] == key){
-					helperDistArr[i]["distances"].push(tweet.distance);
-					break;
-				}
+	}
+	
+
+	// Create an object to store individual data points for each activity type
+	let individualActivityData = {
+		"biking": {
+			'Mon': perDayDistBiking['Mon'],
+			'Tue': perDayDistBiking['Tue'],
+			'Wed': perDayDistBiking['Wed'],
+			'Thu': perDayDistBiking['Thu'],
+			'Fri': perDayDistBiking['Fri'],
+			'Sat': perDayDistBiking['Sat'],
+			'Sun': perDayDistBiking['Sun'],	
+		},
+
+		"swimming": {
+			'Mon': perDayDistSwimming['Mon'],
+			'Tue': perDayDistSwimming['Tue'],
+			'Wed': perDayDistSwimming['Wed'],
+			'Thu': perDayDistSwimming['Thu'],
+			'Fri': perDayDistSwimming['Fri'],
+			'Sat': perDayDistSwimming['Sat'],
+			'Sun': perDayDistSwimming['Sun'],	
+		},
+		"running": {
+			'Mon': perDayDistRunning['Mon'],
+			'Tue': perDayDistRunning['Tue'],
+			'Wed': perDayDistRunning['Wed'],
+			'Thu': perDayDistRunning['Thu'],
+			'Fri': perDayDistRunning['Fri'],
+			'Sat': perDayDistRunning['Sat'],
+			'Sun': perDayDistRunning['Sun'],	
+		}
+	};
+	
+		distOfThreeActs = {
+			"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+			"description": "A graph of the distance per day of the three most popular activities.",
+			"data": {"values": distByDayArr},
+			"mark": "point",
+			"encoding": {
+			"x": {
+				"field": "Day",
+				"type": "nominal",
+				"sort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+			},
+			"y": {
+				"field": "Distance",
+				"type": "quantitative",
+				"scale": {"domain": [0, 40]}
+			},
+			"color": {"field": "Activity", 
+						"type": "nominal", "scale": {"scheme": "category10"}},
 			}
-		}
-	});
-
-	//array to hold avg dist per day
-	var avgDistByDayArr = [];
-	helpAvgArr.forEach(function(item){
-		var total = 0.0;
-		for ( var i = 0; i < item["distances"].length; i++){
-			total += item["distances"][i];
-		}
-		avgDistByDayArr.push({
-			time: item["d"].day,
-			averageDist: total/item["distances"].length,
-			activity: item["a"]
-		})
-	});
-
-
-	distOfThreeActs = {
-		"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-		"description": "A graph of the distance per day of the three most popular activities.",
-		"data": {"values": [distByDayArr]},
-		"mark": "point",
-		"encoding": {
-		  "x": {
-			  "field": "Day",
-			  "type": "nominal",
-			  "sort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-		  },
-		  "y": {
-			  "field": "Distance",
-			  "type": "quantitative",
-			  "scale": {"domain": [0, 1000]}
-		  },
-		  "color": {"field": "Activities Done", 
-		  			"type": "nominal"},
-		  }
-	  };
-	  vegaEmbed('#distanceVis', distOfThreeActs, {actions:false});
-	  //$('#distanceVis').hide();
+		};
+	  	vegaEmbed('#distanceVis', distOfThreeActs, {actions:false});
+		$("#distanceVis").hide()
+		
+		
 
 
 
-
+	// average graph
 	  distOf3Aggre = {
 		"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
 		"description": "A graph of the distance per day of the three most popular activities.",
-		"data": {"values": avgDistByDayArr},
+		"data": {"values": individualActivityData},
 		"mark": "point",
 		"encoding": {
 		  "x": {
@@ -294,7 +340,22 @@ function parseTweets(runkeeper_tweets) {
 		  }
 	  };
 	  vegaEmbed('#distanceVisAggregated', distOf3Aggre, {actions:false});
-	  console.log(avgDistByDayArr.length);
+
+	  //onclick to go between graphs
+	  $("#aggregate").on("click", function() {
+		// Toggle graph visibility and update button text
+		if ($('#distanceVis').is(":visible")) {
+			// Hide the graph
+			$('#distanceVis').hide();
+			
+			$(this).text("Show means");
+		} else {
+			// Show the graph
+			$('#distanceVis').show();
+			$('#distanceVisAggregated').hide()
+			$(this).text("Show all activities");
+		}
+	});
 }
 
 

@@ -65,8 +65,7 @@ function parseTweets(runkeeper_tweets) {
 			checker++;
 		}
 		else{
-			console.log(tweet.written.hasUserText);
-			console.log(tweet.source);
+			
 		}
 	});
 	

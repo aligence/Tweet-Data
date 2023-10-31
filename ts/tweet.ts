@@ -76,7 +76,7 @@ class Tweet {
             return "workout";
         }
         else {
-        return "undefined";
+            return "undefined";
         }
     }
 
@@ -131,22 +131,9 @@ class Tweet {
         else{ return "Sat"}
         
     }
-    get extractUrl():string {
-                let urlRegex = /(\b(https?|ftp|file):\/\/([-A-Z0-9+&@#%?=~_|!:,.;]*)([-A-Z0-9+&@#%?\/=~_|!:,.;]*)[-A-Z0-9+&@#\/%=~_|])/ig;
-                let match = this.text.match(urlRegex);
-                if (match && match.length > 0) {
-                    let url = match[0];
-                    return url;
-                } else {
-                    console.log("No URL found in the text.");
-                    return "";
-                }
-            }
-        
-    getHTMLTableRow(text:string):string {
-        //TODO: return a table row which summarizes the tweet with a clickable link to the RunKeeper activity
-         
-        return '<tr>${text}<tr>';
-    }
+   
 
+    getHTMLTableRow(rowNumber:number) {
+      
+    }
 }
